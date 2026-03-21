@@ -32,7 +32,7 @@ build*/
 *.pgc
 *.pgd
 *.ilk
-
+shaderc_combinedd.lib
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
