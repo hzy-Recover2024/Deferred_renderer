@@ -44,7 +44,11 @@ set(LIBS ${LIBS} STB_IMAGE)
 add_library(GLAD ${PROJECT_DIR}/src/glad.c)
 set(LIBS ${LIBS} GLAD)
 
-set(LIBS ${LIBS} shaderc_combined)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_CONFIGURATION_TYPES)
+    set(LIBS ${LIBS} debug shaderc_combinedd optimized shaderc_combined)
+else()
+    set(LIBS ${LIBS} shaderc_combined)
+endif()
 
 file(GLOB SOURCES 
     "${PROJECT_DIR}/src/*.cpp"
