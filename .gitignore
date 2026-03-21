@@ -27,7 +27,6 @@ build/
 !thirdParty/**/*.lib
 !thirdParty/**/*.dll
 
-thirdParty/shaderc_combined.lib
 *.iobj
 *.ipdb
 *.pgc
