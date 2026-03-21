@@ -22,6 +22,12 @@ build/
 *.exe
 *.lib
 *.exp
+!thirdParty/*.lib
+!thirdParty/*.dll
+!thirdParty/**/*.lib
+!thirdParty/**/*.dll
+
+thirdParty/shaderc_combined.lib
 *.iobj
 *.ipdb
 *.pgc
