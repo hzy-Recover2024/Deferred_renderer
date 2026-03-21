@@ -11,7 +11,7 @@ bool GBuffer::Init(unsigned int width, unsigned int height)
     m_Width = width;
     m_Height = height;
 
-    m_Framebuffer = std::make_shared<Framebuffer>("GBuffer");
+    m_Framebuffer = MakeRefPtr<Framebuffer>("GBuffer");
     m_Framebuffer->Create();
 
     Texture::Desc positionDesc;
@@ -22,7 +22,7 @@ bool GBuffer::Init(unsigned int width, unsigned int height)
     positionDesc.Type = GL_FLOAT;
     positionDesc.FilterMin = GL_NEAREST;
     positionDesc.FilterMag = GL_NEAREST;
-    m_Textures[POSITION] = std::make_shared<Texture>("GPosition", positionDesc);
+    m_Textures[POSITION] = MakeRefPtr<Texture>("GPosition", positionDesc);
 
     Texture::Desc normalDesc;
     normalDesc.Width = width;
@@ -32,7 +32,7 @@ bool GBuffer::Init(unsigned int width, unsigned int height)
     normalDesc.Type = GL_FLOAT;
     normalDesc.FilterMin = GL_NEAREST;
     normalDesc.FilterMag = GL_NEAREST;
-    m_Textures[NORMAL] = std::make_shared<Texture>("GNormal", normalDesc);
+    m_Textures[NORMAL] = MakeRefPtr<Texture>("GNormal", normalDesc);
 
     Texture::Desc albedoDesc;
     albedoDesc.Width = width;
@@ -42,7 +42,7 @@ bool GBuffer::Init(unsigned int width, unsigned int height)
     albedoDesc.Type = GL_UNSIGNED_BYTE;
     albedoDesc.FilterMin = GL_NEAREST;
     albedoDesc.FilterMag = GL_NEAREST;
-    m_Textures[ALBEDO_SPEC] = std::make_shared<Texture>("GAlbedoSpec", albedoDesc);
+    m_Textures[ALBEDO_SPEC] = MakeRefPtr<Texture>("GAlbedoSpec", albedoDesc);
 
     Texture::Desc depthDesc;
     depthDesc.Width = width;
@@ -52,7 +52,7 @@ bool GBuffer::Init(unsigned int width, unsigned int height)
     depthDesc.Type = GL_UNSIGNED_INT_24_8;
     depthDesc.FilterMin = GL_NEAREST;
     depthDesc.FilterMag = GL_NEAREST;
-    m_Textures[DEPTH] = std::make_shared<Texture>("GDepth", depthDesc);
+    m_Textures[DEPTH] = MakeRefPtr<Texture>("GDepth", depthDesc);
 
     m_Framebuffer->AddColorAttachment(m_Textures[POSITION], 0);
     m_Framebuffer->AddColorAttachment(m_Textures[NORMAL], 1);
@@ -116,7 +116,7 @@ void GBuffer::BindTexture(GBufferTexture textureType, unsigned int slot) const
     }
 }
 
-std::shared_ptr<Texture> GBuffer::GetTexture(GBufferTexture type) const
+RefPtr<Texture> GBuffer::GetTexture(GBufferTexture type) const
 {
     if (type < COUNT)
         return m_Textures[type];

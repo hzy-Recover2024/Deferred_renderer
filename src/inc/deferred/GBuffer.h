@@ -4,7 +4,6 @@
 #include "rendergraph/Texture.h"
 #include "rendergraph/Framebuffer.h"
 #include <glad/glad.h>
-#include <memory>
 
 class GBuffer
 {
@@ -30,15 +29,15 @@ public:
     void SetReadBuffer(GBufferTexture textureType);
     void BindTexture(GBufferTexture textureType, unsigned int slot) const;
 
-    std::shared_ptr<Texture> GetTexture(GBufferTexture type) const;
-    std::shared_ptr<Framebuffer> GetFramebuffer() const { return m_Framebuffer; }
+    RefPtr<Texture> GetTexture(GBufferTexture type) const;
+    RefPtr<Framebuffer> GetFramebuffer() const { return m_Framebuffer; }
 
     unsigned int GetWidth() const { return m_Width; }
     unsigned int GetHeight() const { return m_Height; }
 
 private:
-    std::shared_ptr<Framebuffer> m_Framebuffer;
-    std::shared_ptr<Texture> m_Textures[COUNT];
+    RefPtr<Framebuffer> m_Framebuffer;
+    RefPtr<Texture> m_Textures[COUNT];
     unsigned int m_Width;
     unsigned int m_Height;
 };
