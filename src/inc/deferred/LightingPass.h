@@ -10,9 +10,9 @@
 #ifndef LIGHTING_PASS_H
 #define LIGHTING_PASS_H
 
-#include "rendergraph/RenderPass.h"
-#include "rendergraph/ShaderManager.h"
-#include "rendergraph/ScreenQuad.h"
+#include "RenderPass.h"
+#include "ShaderManager.h"
+#include "ScreenQuad.h"
 #include "GBuffer.h"
 #include "Light.h"
 #include "shader_shaderc.h"

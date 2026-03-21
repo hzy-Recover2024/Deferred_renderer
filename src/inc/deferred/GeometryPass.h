@@ -9,8 +9,8 @@
 #ifndef GEOMETRY_PASS_H
 #define GEOMETRY_PASS_H
 
-#include "rendergraph/RenderPass.h"
-#include "rendergraph/ShaderManager.h"
+#include "RenderPass.h"
+#include "ShaderManager.h"
 #include "GBuffer.h"
 #include "shader_shaderc.h"
 #include <glm/glm.hpp>

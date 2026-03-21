@@ -3,7 +3,7 @@
  * @brief 帧缓冲资源类实现 / Framebuffer resource class implementation
  */
 
-#include "rendergraph/Framebuffer.h"
+#include "Framebuffer.h"
 #include <iostream>
 
 /**

@@ -3,7 +3,7 @@
  * @brief 渲染资源基类实现 / Render resource base class implementation
  */
 
-#include "rendergraph/RenderResource.h"
+#include "RenderResource.h"
 
 /// 静态成员初始化：下一个可用 ID / Static member initialization: next available ID
 unsigned int RenderResource::s_NextID = 1;

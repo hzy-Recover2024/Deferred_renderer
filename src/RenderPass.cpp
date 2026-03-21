@@ -3,7 +3,7 @@
  * @brief 渲染通道基类实现 / Render pass base class implementation
  */
 
-#include "rendergraph/RenderPass.h"
+#include "RenderPass.h"
 
 /**
  * @brief 构造函数实现 / Constructor implementation

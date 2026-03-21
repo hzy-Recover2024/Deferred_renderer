@@ -3,7 +3,7 @@
  * @brief 纹理资源类实现 / Texture resource class implementation
  */
 
-#include "rendergraph/Texture.h"
+#include "Texture.h"
 #include <iostream>
 
 /**

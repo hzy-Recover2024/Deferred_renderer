@@ -9,7 +9,7 @@
 #ifndef SHADER_MANAGER_H
 #define SHADER_MANAGER_H
 
-#include "rendergraph/RenderResource.h"
+#include "RenderResource.h"
 #include "shader_shaderc.h"
 #include <unordered_map>
 #include <string>

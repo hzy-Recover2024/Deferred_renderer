@@ -3,7 +3,7 @@
  * @brief 着色器管理器类实现 / Shader manager class implementation
  */
 
-#include "rendergraph/ShaderManager.h"
+#include "ShaderManager.h"
 #include <iostream>
 
 /**

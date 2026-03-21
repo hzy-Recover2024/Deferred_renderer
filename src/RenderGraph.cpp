@@ -3,7 +3,7 @@
  * @brief 渲染图管理类实现 / Render graph management class implementation
  */
 
-#include "rendergraph/RenderGraph.h"
+#include "RenderGraph.h"
 #include <iostream>
 #include <algorithm>
 #include <unordered_set>

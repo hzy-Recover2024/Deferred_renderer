@@ -9,9 +9,9 @@
 #ifndef DEFERRED_RENDERER_H
 #define DEFERRED_RENDERER_H
 
-#include "rendergraph/RenderGraph.h"
-#include "rendergraph/ShaderManager.h"
-#include "rendergraph/Framebuffer.h"
+#include "RenderGraph.h"
+#include "ShaderManager.h"
+#include "Framebuffer.h"
 #include "GBuffer.h"
 #include "GeometryPass.h"
 #include "LightingPass.h"

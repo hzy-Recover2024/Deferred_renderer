@@ -52,13 +52,11 @@ endif()
 
 file(GLOB SOURCES 
     "${PROJECT_DIR}/src/*.cpp"
-    "${PROJECT_DIR}/src/rendergraph/*.cpp"
     "${PROJECT_DIR}/src/deferred/*.cpp"
 )
 
 file(GLOB HEADERS
     "${PROJECT_DIR}/src/inc/*.h"
-    "${PROJECT_DIR}/src/inc/rendergraph/*.h"
     "${PROJECT_DIR}/src/inc/deferred/*.h"
 )
 

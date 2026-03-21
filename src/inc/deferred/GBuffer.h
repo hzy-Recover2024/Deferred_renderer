@@ -1,8 +1,8 @@
 #ifndef GBUFFER_H
 #define GBUFFER_H
 
-#include "rendergraph/Texture.h"
-#include "rendergraph/Framebuffer.h"
+#include "Texture.h"
+#include "Framebuffer.h"
 #include <glad/glad.h>
 
 class GBuffer
