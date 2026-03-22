@@ -16,6 +16,7 @@ set(PROJECT_DIR ${CMAKE_SOURCE_DIR})
 
 include_directories(${PROJECT_DIR}/include)
 include_directories(${PROJECT_DIR}/src/inc)
+include_directories(${PROJECT_DIR}/shader)
 
 link_directories(${PROJECT_DIR}/thirdParty)
 

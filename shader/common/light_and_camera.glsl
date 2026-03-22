@@ -11,8 +11,6 @@
 
 #include "uniform_layout.h"
 
-
-
 // ==================== 光源类型常量 / Light Type Constants ====================
 
 const int LIGHT_TYPE_DIRECTIONAL = 0;
@@ -110,5 +108,7 @@ vec3 getLightDir(Light light, vec3 worldPos)
  {
     Light uLights[MAX_LIGHTS];
  };
+
+layout(binding = LightCount_binding) uniform int lightCount;
 
 #endif
