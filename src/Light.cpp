@@ -1,13 +1,11 @@
 /**
  * @file Light.cpp
- * @brief 光源管理器实现 / Light manager implementation
+ * @brief 光源管理器实现
  */
 
 #include "Light.h"
 #include <stdexcept>
 #include <random>
-
-// ==================== 平行光操作 / Directional Light Operations ====================
 
 void LightManager::AddDirectionalLight(const DirectionalLight& light)
 {
@@ -22,9 +20,7 @@ void LightManager::AddDirectionalLight(const glm::vec3& direction, const glm::ve
 void LightManager::RemoveDirectionalLight(unsigned int index)
 {
     if (index >= m_directionalLights.size())
-    {
         throw std::out_of_range("Directional light index out of range");
-    }
     m_directionalLights.erase(m_directionalLights.begin() + index);
 }
 
@@ -36,29 +32,23 @@ void LightManager::ClearDirectionalLights()
 DirectionalLight& LightManager::GetDirectionalLight(unsigned int index)
 {
     if (index >= m_directionalLights.size())
-    {
         throw std::out_of_range("Directional light index out of range");
-    }
     return m_directionalLights[index];
 }
 
 const DirectionalLight& LightManager::GetDirectionalLight(unsigned int index) const
 {
     if (index >= m_directionalLights.size())
-    {
         throw std::out_of_range("Directional light index out of range");
-    }
     return m_directionalLights[index];
 }
-
-// ==================== 点光源操作 / Point Light Operations ====================
 
 void LightManager::AddPointLight(const PointLight& light)
 {
     m_pointLights.push_back(light);
 }
 
-void LightManager::AddPointLight(const glm::vec3& position, const glm::vec3& color, 
+void LightManager::AddPointLight(const glm::vec3& position, const glm::vec3& color,
                                   float intensity, float influenceRadius)
 {
     m_pointLights.emplace_back(position, color, intensity, influenceRadius);
@@ -67,9 +57,7 @@ void LightManager::AddPointLight(const glm::vec3& position, const glm::vec3& col
 void LightManager::RemovePointLight(unsigned int index)
 {
     if (index >= m_pointLights.size())
-    {
         throw std::out_of_range("Point light index out of range");
-    }
     m_pointLights.erase(m_pointLights.begin() + index);
 }
 
@@ -81,29 +69,23 @@ void LightManager::ClearPointLights()
 PointLight& LightManager::GetPointLight(unsigned int index)
 {
     if (index >= m_pointLights.size())
-    {
         throw std::out_of_range("Point light index out of range");
-    }
     return m_pointLights[index];
 }
 
 const PointLight& LightManager::GetPointLight(unsigned int index) const
 {
     if (index >= m_pointLights.size())
-    {
         throw std::out_of_range("Point light index out of range");
-    }
     return m_pointLights[index];
 }
-
-// ==================== 聚光灯操作 / Spot Light Operations ====================
 
 void LightManager::AddSpotLight(const SpotLight& light)
 {
     m_spotLights.push_back(light);
 }
 
-void LightManager::AddSpotLight(const glm::vec3& position, const glm::vec3& direction, 
+void LightManager::AddSpotLight(const glm::vec3& position, const glm::vec3& direction,
                                  const glm::vec3& color, float intensity,
                                  float innerAngle, float outerAngle)
 {
@@ -113,9 +95,7 @@ void LightManager::AddSpotLight(const glm::vec3& position, const glm::vec3& dire
 void LightManager::RemoveSpotLight(unsigned int index)
 {
     if (index >= m_spotLights.size())
-    {
         throw std::out_of_range("Spot light index out of range");
-    }
     m_spotLights.erase(m_spotLights.begin() + index);
 }
 
@@ -127,22 +107,16 @@ void LightManager::ClearSpotLights()
 SpotLight& LightManager::GetSpotLight(unsigned int index)
 {
     if (index >= m_spotLights.size())
-    {
         throw std::out_of_range("Spot light index out of range");
-    }
     return m_spotLights[index];
 }
 
 const SpotLight& LightManager::GetSpotLight(unsigned int index) const
 {
     if (index >= m_spotLights.size())
-    {
         throw std::out_of_range("Spot light index out of range");
-    }
     return m_spotLights[index];
 }
-
-// ==================== 通用操作 / General Operations ====================
 
 void LightManager::ClearAllLights()
 {
@@ -151,13 +125,13 @@ void LightManager::ClearAllLights()
     m_spotLights.clear();
 }
 
-void LightManager::GenerateRandomPointLights(unsigned int count, 
-                                              const glm::vec3& minBounds, 
+void LightManager::GenerateRandomPointLights(unsigned int count,
+                                              const glm::vec3& minBounds,
                                               const glm::vec3& maxBounds)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    
+
     std::uniform_real_distribution<float> posX(minBounds.x, maxBounds.x);
     std::uniform_real_distribution<float> posY(minBounds.y, maxBounds.y);
     std::uniform_real_distribution<float> posZ(minBounds.z, maxBounds.z);

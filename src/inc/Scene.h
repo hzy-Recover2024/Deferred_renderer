@@ -1,12 +1,6 @@
 /**
  * @file Scene.h
- * @brief 场景类定义 / Scene class definition
- * 
- * 管理场景中的光源和可渲染对象，负责将光源数据上传到 GPU。
- * Manages lights and renderable objects in the scene, responsible for uploading light data to GPU.
- * 
- * 注意：相机由 View 管理，Scene 只负责光源。
- * Note: Camera is managed by View, Scene only manages lights.
+ * @brief 场景类，管理光源数据并上传到 GPU
  */
 
 #ifndef SCENE_H

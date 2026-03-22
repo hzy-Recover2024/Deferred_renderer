@@ -1,9 +1,6 @@
 /**
  * @file View.h
- * @brief 视图类定义 / View class definition
- * 
- * 封装了视口、渲染目标和相机，负责将相机数据上传到 GPU。
- * Encapsulates viewport, render target and camera, responsible for uploading camera data to GPU.
+ * @brief 视图类，封装视口、渲染目标和相机
  */
 
 #ifndef VIEW_H
@@ -24,14 +21,9 @@ struct Viewport
     int Height;
 
     Viewport() : X(0), Y(0), Width(800), Height(600) {}
+    Viewport(int x, int y, int width, int height) : X(x), Y(y), Width(width), Height(height) {}
 
-    Viewport(int x, int y, int width, int height) 
-        : X(x), Y(y), Width(width), Height(height) {}
-
-    float GetAspectRatio() const 
-    { 
-        return static_cast<float>(Width) / static_cast<float>(Height); 
-    }
+    float GetAspectRatio() const { return static_cast<float>(Width) / static_cast<float>(Height); }
 };
 
 class View

@@ -1,6 +1,6 @@
 /**
  * @file UniformBuffer.cpp
- * @brief Uniform 缓冲资源类实现 / Uniform buffer resource class implementation
+ * @brief Uniform 缓冲资源类实现
  */
 
 #include "UniformBuffer.h"
@@ -17,17 +17,13 @@ UniformBuffer::UniformBuffer(const std::string& name, size_t size, unsigned int 
 UniformBuffer::~UniformBuffer()
 {
     if (IsValid())
-    {
         Destroy();
-    }
 }
 
 void UniformBuffer::Create()
 {
     if (IsValid())
-    {
         return;
-    }
 
     glGenBuffers(1, &UBO);
     glBindBuffer(GL_UNIFORM_BUFFER, UBO);
@@ -39,9 +35,7 @@ void UniformBuffer::Create()
 void UniformBuffer::Destroy()
 {
     if (!IsValid())
-    {
         return;
-    }
 
     glDeleteBuffers(1, &UBO);
     UBO = 0;
@@ -60,9 +54,7 @@ void UniformBuffer::Unbind() const
 void UniformBuffer::SetData(const void* data, size_t size, size_t offset)
 {
     if (!IsValid() || data == nullptr || size == 0)
-    {
         return;
-    }
 
     glBindBuffer(GL_UNIFORM_BUFFER, UBO);
     glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
@@ -72,9 +64,7 @@ void UniformBuffer::SetData(const void* data, size_t size, size_t offset)
 void UniformBuffer::BindRange(size_t offset, size_t size)
 {
     if (!IsValid())
-    {
         return;
-    }
 
     glBindBufferRange(GL_UNIFORM_BUFFER, m_BindingPoint, UBO, offset, size);
 }

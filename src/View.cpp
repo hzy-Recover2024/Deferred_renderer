@@ -1,6 +1,6 @@
 /**
  * @file View.cpp
- * @brief 视图类实现 / View class implementation
+ * @brief 视图类实现
  */
 
 #include "View.h"
@@ -81,32 +81,19 @@ void View::SetCamera(std::shared_ptr<Camera> camera)
 
 glm::mat4 View::GetViewMatrix() const
 {
-    if (m_Camera)
-    {
-        return m_Camera->GetViewMatrix();
-    }
-    return glm::mat4(1.0f);
+    return m_Camera ? m_Camera->GetViewMatrix() : glm::mat4(1.0f);
 }
 
 glm::mat4 View::GetProjectionMatrix() const
 {
-    if (m_Camera)
-    {
-        return m_Camera->GetProjectionMatrix(
-            static_cast<float>(m_Viewport.Width),
-            static_cast<float>(m_Viewport.Height)
-        );
-    }
-    return glm::mat4(1.0f);
+    return m_Camera ? m_Camera->GetProjectionMatrix(
+        static_cast<float>(m_Viewport.Width),
+        static_cast<float>(m_Viewport.Height)) : glm::mat4(1.0f);
 }
 
 glm::vec3 View::GetCameraPosition() const
 {
-    if (m_Camera)
-    {
-        return m_Camera->Position;
-    }
-    return glm::vec3(0.0f);
+    return m_Camera ? m_Camera->Position : glm::vec3(0.0f);
 }
 
 void View::UpdateCameraUBO()
@@ -140,27 +127,18 @@ void View::BindCameraUBO() const
 void View::Bind() const
 {
     glViewport(m_Viewport.X, m_Viewport.Y, m_Viewport.Width, m_Viewport.Height);
-
     if (m_RenderTarget)
-    {
         m_RenderTarget->Bind();
-    }
     else
-    {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
 }
 
 void View::Unbind() const
 {
     if (m_RenderTarget)
-    {
         m_RenderTarget->Unbind();
-    }
     else
-    {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
 }
 
 void View::Clear(float r, float g, float b, float a) const

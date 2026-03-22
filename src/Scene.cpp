@@ -1,6 +1,6 @@
 /**
  * @file Scene.cpp
- * @brief 场景类实现 / Scene class implementation
+ * @brief 场景类实现
  */
 
 #include "Scene.h"
@@ -56,7 +56,7 @@ void convertSpotLight(const SpotLight& spotLight, GPULightData* data)
     data->colorIntensity = glm::vec4(spotLight.color, spotLight.intensity);
     data->positionInvRadius = glm::vec4(spotLight.position, invRadius);
     data->directionType = glm::vec4(glm::normalize(spotLight.direction), 2.0f);
-    data->params = glm::vec4(spotLight.innerConeAngle, spotLight.outerConeAngle, 
+    data->params = glm::vec4(spotLight.innerConeAngle, spotLight.outerConeAngle,
                              spotLight.colorTemperature, spotLight.sourceRadius);
     data->castShadows = spotLight.castShadows ? 1 : 0;
     data->padding1 = 0;
@@ -91,28 +91,23 @@ void Scene::UpdateLightUBO()
     std::vector<char> buffer(bufferSize, 0);
 
     GLint lightCount = 0;
-    memcpy(buffer.data(), &lightCount, sizeof(GLint));
-
     GPULightData* lightData = reinterpret_cast<GPULightData*>(buffer.data() + 16);
 
-    const auto& dirLights = m_lightManager.GetDirectionalLights();
-    for (const auto& dirLight : dirLights)
+    for (const auto& dirLight : m_lightManager.GetDirectionalLights())
     {
         if (lightCount >= MAX_LIGHTS) break;
         convertDirectionalLight(dirLight, lightData + lightCount);
         lightCount++;
     }
 
-    const auto& pointLights = m_lightManager.GetPointLights();
-    for (const auto& pointLight : pointLights)
+    for (const auto& pointLight : m_lightManager.GetPointLights())
     {
         if (lightCount >= MAX_LIGHTS) break;
         convertPointLight(pointLight, lightData + lightCount);
         lightCount++;
     }
 
-    const auto& spotLights = m_lightManager.GetSpotLights();
-    for (const auto& spotLight : spotLights)
+    for (const auto& spotLight : m_lightManager.GetSpotLights())
     {
         if (lightCount >= MAX_LIGHTS) break;
         convertSpotLight(spotLight, lightData + lightCount);
@@ -120,7 +115,6 @@ void Scene::UpdateLightUBO()
     }
 
     memcpy(buffer.data(), &lightCount, sizeof(GLint));
-
     m_LightUBO->SetData(buffer.data(), bufferSize);
     m_Dirty = false;
 }

@@ -1,30 +1,21 @@
 /**
  * @file Framebuffer.cpp
- * @brief 帧缓冲资源类实现 / Framebuffer resource class implementation
+ * @brief 帧缓冲资源类实现
  */
 
 #include "Framebuffer.h"
 #include <iostream>
 
-/**
- * @brief 构造函数实现 / Constructor implementation
- */
 Framebuffer::Framebuffer(const std::string& name)
     : RenderResource(name, ResourceType::Framebuffer), FBO(0)
 {
 }
 
-/**
- * @brief 析构函数，自动销毁帧缓冲 / Destructor, automatically destroys framebuffer
- */
 Framebuffer::~Framebuffer()
 {
     Destroy();
 }
 
-/**
- * @brief 创建 GPU 帧缓冲资源 / Create GPU framebuffer resource
- */
 void Framebuffer::Create()
 {
     if (FBO != 0)
@@ -33,9 +24,6 @@ void Framebuffer::Create()
     glGenFramebuffers(1, &FBO);
 }
 
-/**
- * @brief 销毁 GPU 帧缓冲资源 / Destroy GPU framebuffer resource
- */
 void Framebuffer::Destroy()
 {
     if (FBO != 0)
@@ -45,14 +33,6 @@ void Framebuffer::Destroy()
     }
 }
 
-/**
- * @brief 添加颜色附件 / Add color attachment
- * @param texture 颜色纹理 / Color texture
- * @param index 附件索引 / Attachment index
- * 
- * 将纹理附加到帧缓冲的指定颜色附件点。
- * Attaches texture to the specified color attachment point of the framebuffer.
- */
 void Framebuffer::AddColorAttachment(RefPtr<Texture> texture, unsigned int index)
 {
     if (!texture)
@@ -70,10 +50,6 @@ void Framebuffer::AddColorAttachment(RefPtr<Texture> texture, unsigned int index
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-/**
- * @brief 设置深度附件 / Set depth attachment
- * @param texture 深度纹理 / Depth texture
- */
 void Framebuffer::SetDepthAttachment(RefPtr<Texture> texture)
 {
     if (!texture)
@@ -86,10 +62,6 @@ void Framebuffer::SetDepthAttachment(RefPtr<Texture> texture)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-/**
- * @brief 设置深度模板附件 / Set depth-stencil attachment
- * @param texture 深度模板纹理 / Depth-stencil texture
- */
 void Framebuffer::SetDepthStencilAttachment(RefPtr<Texture> texture)
 {
     if (!texture)
@@ -102,29 +74,16 @@ void Framebuffer::SetDepthStencilAttachment(RefPtr<Texture> texture)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-/**
- * @brief 绑定帧缓冲 / Bind framebuffer
- */
 void Framebuffer::Bind() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 }
 
-/**
- * @brief 解绑帧缓冲（绑定默认帧缓冲）/ Unbind framebuffer (bind default framebuffer)
- */
 void Framebuffer::Unbind() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-/**
- * @brief 清除颜色缓冲 / Clear color buffer
- * @param r 红色分量 / Red component
- * @param g 绿色分量 / Green component
- * @param b 蓝色分量 / Blue component
- * @param a Alpha 分量 / Alpha component
- */
 void Framebuffer::Clear(float r, float g, float b, float a)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -133,10 +92,6 @@ void Framebuffer::Clear(float r, float g, float b, float a)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-/**
- * @brief 清除深度缓冲 / Clear depth buffer
- * @param depth 深度值 / Depth value
- */
 void Framebuffer::ClearDepth(float depth)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -145,13 +100,6 @@ void Framebuffer::ClearDepth(float depth)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-/**
- * @brief 获取帧缓冲宽度 / Get framebuffer width
- * @return 宽度 / Width
- * 
- * 从第一个附件获取宽度。
- * Gets width from the first attachment.
- */
 unsigned int Framebuffer::GetWidth() const
 {
     if (!m_ColorAttachments.empty())
@@ -163,13 +111,6 @@ unsigned int Framebuffer::GetWidth() const
     return 0;
 }
 
-/**
- * @brief 获取帧缓冲高度 / Get framebuffer height
- * @return 高度 / Height
- * 
- * 从第一个附件获取高度。
- * Gets height from the first attachment.
- */
 unsigned int Framebuffer::GetHeight() const
 {
     if (!m_ColorAttachments.empty())
