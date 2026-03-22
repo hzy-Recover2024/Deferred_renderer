@@ -11,6 +11,7 @@
 
 #include "Camera.h"
 #include "Framebuffer.h"
+#include "UniformBuffer.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <memory>
@@ -60,6 +61,7 @@ public:
     glm::mat4 GetProjectionMatrix() const;
     glm::vec3 GetCameraPosition() const;
 
+    void MarkDirty() { m_Dirty = true; }
     void UpdateCameraUBO();
     void BindCameraUBO() const;
 
@@ -74,7 +76,8 @@ private:
     Viewport m_Viewport;
     RefPtr<Framebuffer> m_RenderTarget;
     std::shared_ptr<Camera> m_Camera;
-    GLuint m_cameraUBO;
+    RefPtr<UniformBuffer> m_CameraUBO;
+    bool m_Dirty = true;
 };
 
 #endif

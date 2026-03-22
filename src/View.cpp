@@ -21,13 +21,16 @@ struct GPUCameraData
     glm::mat4 invViewProjectionMatrix;
 };
 
+static_assert(sizeof(GPUCameraData) == 416, "GPUCameraData size must be 416 bytes for std140 layout");
+
 }
 
 View::View()
     : m_Viewport()
     , m_RenderTarget(nullptr)
     , m_Camera(std::make_shared<Camera>())
-    , m_cameraUBO(0)
+    , m_CameraUBO(nullptr)
+    , m_Dirty(true)
 {
     initUBO();
 }
@@ -36,27 +39,18 @@ View::View(const Viewport& viewport)
     : m_Viewport(viewport)
     , m_RenderTarget(nullptr)
     , m_Camera(std::make_shared<Camera>())
-    , m_cameraUBO(0)
+    , m_CameraUBO(nullptr)
+    , m_Dirty(true)
 {
     initUBO();
 }
 
-View::~View()
-{
-    if (m_cameraUBO)
-    {
-        glDeleteBuffers(1, &m_cameraUBO);
-        m_cameraUBO = 0;
-    }
-}
+View::~View() = default;
 
 void View::initUBO()
 {
-    glGenBuffers(1, &m_cameraUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_cameraUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUCameraData), nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, Camera_binding, m_cameraUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    m_CameraUBO = MakeRefPtr<UniformBuffer>("CameraUBO", sizeof(GPUCameraData), Camera_binding);
+    m_CameraUBO->Create();
 }
 
 void View::SetViewport(int x, int y, int width, int height)
@@ -65,11 +59,13 @@ void View::SetViewport(int x, int y, int width, int height)
     m_Viewport.Y = y;
     m_Viewport.Width = width;
     m_Viewport.Height = height;
+    m_Dirty = true;
 }
 
 void View::SetViewport(const Viewport& viewport)
 {
     m_Viewport = viewport;
+    m_Dirty = true;
 }
 
 void View::SetRenderTarget(RefPtr<Framebuffer> framebuffer)
@@ -80,6 +76,7 @@ void View::SetRenderTarget(RefPtr<Framebuffer> framebuffer)
 void View::SetCamera(std::shared_ptr<Camera> camera)
 {
     m_Camera = camera;
+    m_Dirty = true;
 }
 
 glm::mat4 View::GetViewMatrix() const
@@ -114,7 +111,7 @@ glm::vec3 View::GetCameraPosition() const
 
 void View::UpdateCameraUBO()
 {
-    if (!m_Camera)
+    if (!m_Dirty || !m_Camera || !m_CameraUBO)
         return;
 
     GPUCameraData gpuData;
@@ -130,14 +127,14 @@ void View::UpdateCameraUBO()
     gpuData.invProjectionMatrix = glm::inverse(gpuData.projectionMatrix);
     gpuData.invViewProjectionMatrix = glm::inverse(gpuData.viewProjectionMatrix);
 
-    glBindBuffer(GL_UNIFORM_BUFFER, m_cameraUBO);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCameraData), &gpuData);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    m_CameraUBO->SetData(&gpuData, sizeof(GPUCameraData));
+    m_Dirty = false;
 }
 
 void View::BindCameraUBO() const
 {
-    glBindBufferBase(GL_UNIFORM_BUFFER, Camera_binding, m_cameraUBO);
+    if (m_CameraUBO)
+        m_CameraUBO->Bind();
 }
 
 void View::Bind() const

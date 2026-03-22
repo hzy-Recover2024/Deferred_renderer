@@ -51,7 +51,7 @@ struct Light
 /**
  * @brief 相机结构体 / Camera structure
  * 
- * 内存布局（400 字节）/ Memory layout (400 bytes):
+ * 内存布局（416 字节）/ Memory layout (416 bytes):
  * - vec4 positionNear:       xyz = 位置, w = 近裁剪面
  * - vec4 forwardFar:         xyz = 前向, w = 远裁剪面
  * - mat4 viewMatrix:         视图矩阵
@@ -96,19 +96,20 @@ vec3 getLightDir(Light light, vec3 worldPos)
     }
 }
 
- // @brief 相机 Uniform Block（单例）/ Camera Uniform Block (singleton)
- layout(std140, binding = Camera_binding) uniform CameraBlock
- {
+// ==================== Uniform Blocks ====================
+
+layout(std140, binding = Camera_binding) uniform CameraBlock
+{
     Camera uCamera;
- };
+};
 
- //* @brief 光源 Uniform Block（数组）/ Light Uniform Block (array)
-
- layout(std140, binding = Light_binding) uniform LightBlock
- {
+layout(std140, binding = Light_binding) uniform LightBlock
+{
+    int lightCount;
+    int _pad1;
+    int _pad2;
+    int _pad3;
     Light uLights[MAX_LIGHTS];
- };
-
-layout(binding = LightCount_binding) uniform int lightCount;
+};
 
 #endif

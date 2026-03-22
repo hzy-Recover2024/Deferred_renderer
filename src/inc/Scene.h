@@ -13,6 +13,7 @@
 #define SCENE_H
 
 #include "Light.h"
+#include "UniformBuffer.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
@@ -28,20 +29,18 @@ public:
     LightManager& GetLightManager() { return m_lightManager; }
     const LightManager& GetLightManager() const { return m_lightManager; }
 
+    void MarkDirty() { m_Dirty = true; }
     void UpdateLightUBO();
     void BindLightUBO() const;
     int GetTotalLightCount() const;
 
 private:
-    void initUBOs();
-    void convertDirectionalLight(const DirectionalLight& dirLight, glm::vec4* data);
-    void convertPointLight(const PointLight& pointLight, glm::vec4* data);
-    void convertSpotLight(const SpotLight& spotLight, glm::vec4* data);
+    void initUBO();
 
 private:
     LightManager m_lightManager;
-    GLuint m_lightUBO;
-    GLuint m_lightCountUBO;
+    RefPtr<UniformBuffer> m_LightUBO;
+    bool m_Dirty = true;
 };
 
 #endif

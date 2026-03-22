@@ -65,23 +65,6 @@ void LightingPass::Execute()
     /// 设置相机位置 / Set camera position
     m_Shader->setVec3("viewPos", m_CameraPosition);
 
-    /// 上传光源数据 / Upload light data
-    if (m_LightManager)
-    {
-        const auto& lights = m_LightManager->GetPointLights();
-        const int NR_LIGHTS = 32;
-
-        m_Shader->setInt("numLights", static_cast<int>(lights.size()));
-
-        for (size_t i = 0; i < lights.size() && i < NR_LIGHTS; ++i)
-        {
-            std::string prefix = "lights[" + std::to_string(i) + "].";
-            m_Shader->setVec3(prefix + "Position", lights[i].position);
-            m_Shader->setVec3(prefix + "Color", lights[i].color * lights[i].intensity);
-            m_Shader->setFloat(prefix + "Radius", lights[i].influenceRadius);
-        }
-    }
-
     /// 渲染全屏四边形 / Render fullscreen quad
     ScreenQuad::GetInstance().Render();
 }

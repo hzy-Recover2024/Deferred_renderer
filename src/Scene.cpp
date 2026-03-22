@@ -21,90 +21,114 @@ struct GPULightData
     GLint padding3;
 };
 
+static_assert(sizeof(GPULightData) == 80, "GPULightData size must be 80 bytes for std140 layout");
+
+void convertDirectionalLight(const DirectionalLight& dirLight, GPULightData* data)
+{
+    data->colorIntensity = glm::vec4(dirLight.color, dirLight.intensity);
+    data->positionInvRadius = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    data->directionType = glm::vec4(glm::normalize(dirLight.direction), 0.0f);
+    data->params = glm::vec4(0.0f, 0.0f, dirLight.colorTemperature, 0.0f);
+    data->castShadows = dirLight.castShadows ? 1 : 0;
+    data->padding1 = 0;
+    data->padding2 = 0;
+    data->padding3 = 0;
+}
+
+void convertPointLight(const PointLight& pointLight, GPULightData* data)
+{
+    float invRadius = (pointLight.influenceRadius > 0.0f) ? (1.0f / pointLight.influenceRadius) : 0.0f;
+
+    data->colorIntensity = glm::vec4(pointLight.color, pointLight.intensity);
+    data->positionInvRadius = glm::vec4(pointLight.position, invRadius);
+    data->directionType = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    data->params = glm::vec4(0.0f, 0.0f, pointLight.colorTemperature, pointLight.sourceRadius);
+    data->castShadows = pointLight.castShadows ? 1 : 0;
+    data->padding1 = 0;
+    data->padding2 = 0;
+    data->padding3 = 0;
+}
+
+void convertSpotLight(const SpotLight& spotLight, GPULightData* data)
+{
+    float invRadius = (spotLight.influenceRadius > 0.0f) ? (1.0f / spotLight.influenceRadius) : 0.0f;
+
+    data->colorIntensity = glm::vec4(spotLight.color, spotLight.intensity);
+    data->positionInvRadius = glm::vec4(spotLight.position, invRadius);
+    data->directionType = glm::vec4(glm::normalize(spotLight.direction), 2.0f);
+    data->params = glm::vec4(spotLight.innerConeAngle, spotLight.outerConeAngle, 
+                             spotLight.colorTemperature, spotLight.sourceRadius);
+    data->castShadows = spotLight.castShadows ? 1 : 0;
+    data->padding1 = 0;
+    data->padding2 = 0;
+    data->padding3 = 0;
+}
+
 }
 
 Scene::Scene()
-    : m_lightUBO(0)
-    , m_lightCountUBO(0)
+    : m_LightUBO(nullptr)
+    , m_Dirty(true)
 {
-    initUBOs();
+    initUBO();
 }
 
-Scene::~Scene()
+Scene::~Scene() = default;
+
+void Scene::initUBO()
 {
-    if (m_lightUBO)
-    {
-        glDeleteBuffers(1, &m_lightUBO);
-        m_lightUBO = 0;
-    }
-    if (m_lightCountUBO)
-    {
-        glDeleteBuffers(1, &m_lightCountUBO);
-        m_lightCountUBO = 0;
-    }
-}
-
-void Scene::initUBOs()
-{
-    glGenBuffers(1, &m_lightUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_lightUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(GPULightData) * MAX_LIGHTS, nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, Light_binding, m_lightUBO);
-
-    glGenBuffers(1, &m_lightCountUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_lightCountUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLint), nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, LightCount_binding, m_lightCountUBO);
-
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    size_t bufferSize = 16 + sizeof(GPULightData) * MAX_LIGHTS;
+    m_LightUBO = MakeRefPtr<UniformBuffer>("LightUBO", bufferSize, Light_binding);
+    m_LightUBO->Create();
 }
 
 void Scene::UpdateLightUBO()
 {
-    GPULightData gpuData[MAX_LIGHTS];
-    memset(gpuData, 0, sizeof(gpuData));
+    if (!m_Dirty || !m_LightUBO)
+        return;
 
-    int lightIndex = 0;
+    size_t bufferSize = 16 + sizeof(GPULightData) * MAX_LIGHTS;
+    std::vector<char> buffer(bufferSize, 0);
+
+    GLint lightCount = 0;
+    memcpy(buffer.data(), &lightCount, sizeof(GLint));
+
+    GPULightData* lightData = reinterpret_cast<GPULightData*>(buffer.data() + 16);
 
     const auto& dirLights = m_lightManager.GetDirectionalLights();
     for (const auto& dirLight : dirLights)
     {
-        if (lightIndex >= MAX_LIGHTS) break;
-        convertDirectionalLight(dirLight, reinterpret_cast<glm::vec4*>(&gpuData[lightIndex]));
-        lightIndex++;
+        if (lightCount >= MAX_LIGHTS) break;
+        convertDirectionalLight(dirLight, lightData + lightCount);
+        lightCount++;
     }
 
     const auto& pointLights = m_lightManager.GetPointLights();
     for (const auto& pointLight : pointLights)
     {
-        if (lightIndex >= MAX_LIGHTS) break;
-        convertPointLight(pointLight, reinterpret_cast<glm::vec4*>(&gpuData[lightIndex]));
-        lightIndex++;
+        if (lightCount >= MAX_LIGHTS) break;
+        convertPointLight(pointLight, lightData + lightCount);
+        lightCount++;
     }
 
     const auto& spotLights = m_lightManager.GetSpotLights();
     for (const auto& spotLight : spotLights)
     {
-        if (lightIndex >= MAX_LIGHTS) break;
-        convertSpotLight(spotLight, reinterpret_cast<glm::vec4*>(&gpuData[lightIndex]));
-        lightIndex++;
+        if (lightCount >= MAX_LIGHTS) break;
+        convertSpotLight(spotLight, lightData + lightCount);
+        lightCount++;
     }
 
-    GLint totalLights = lightIndex;
+    memcpy(buffer.data(), &lightCount, sizeof(GLint));
 
-    glBindBuffer(GL_UNIFORM_BUFFER, m_lightUBO);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPULightData) * MAX_LIGHTS, gpuData);
-
-    glBindBuffer(GL_UNIFORM_BUFFER, m_lightCountUBO);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GLint), &totalLights);
-
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    m_LightUBO->SetData(buffer.data(), bufferSize);
+    m_Dirty = false;
 }
 
 void Scene::BindLightUBO() const
 {
-    glBindBufferBase(GL_UNIFORM_BUFFER, Light_binding, m_lightUBO);
-    glBindBufferBase(GL_UNIFORM_BUFFER, LightCount_binding, m_lightCountUBO);
+    if (m_LightUBO)
+        m_LightUBO->Bind();
 }
 
 int Scene::GetTotalLightCount() const
@@ -114,45 +138,4 @@ int Scene::GetTotalLightCount() const
         m_lightManager.GetPointLightCount() +
         m_lightManager.GetSpotLightCount()
     );
-}
-
-void Scene::convertDirectionalLight(const DirectionalLight& dirLight, glm::vec4* data)
-{
-    data[0] = glm::vec4(dirLight.color, dirLight.intensity);
-    data[1] = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-    data[2] = glm::vec4(glm::normalize(dirLight.direction), 0.0f);
-    data[3] = glm::vec4(0.0f, 0.0f, dirLight.colorTemperature, 0.0f);
-    reinterpret_cast<GLint*>(data)[16] = dirLight.castShadows ? 1 : 0;
-    reinterpret_cast<GLint*>(data)[17] = 0;
-    reinterpret_cast<GLint*>(data)[18] = 0;
-    reinterpret_cast<GLint*>(data)[19] = 0;
-}
-
-void Scene::convertPointLight(const PointLight& pointLight, glm::vec4* data)
-{
-    float invRadius = (pointLight.influenceRadius > 0.0f) ? (1.0f / pointLight.influenceRadius) : 0.0f;
-
-    data[0] = glm::vec4(pointLight.color, pointLight.intensity);
-    data[1] = glm::vec4(pointLight.position, invRadius);
-    data[2] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    data[3] = glm::vec4(0.0f, 0.0f, pointLight.colorTemperature, pointLight.sourceRadius);
-    reinterpret_cast<GLint*>(data)[16] = pointLight.castShadows ? 1 : 0;
-    reinterpret_cast<GLint*>(data)[17] = 0;
-    reinterpret_cast<GLint*>(data)[18] = 0;
-    reinterpret_cast<GLint*>(data)[19] = 0;
-}
-
-void Scene::convertSpotLight(const SpotLight& spotLight, glm::vec4* data)
-{
-    float invRadius = (spotLight.influenceRadius > 0.0f) ? (1.0f / spotLight.influenceRadius) : 0.0f;
-
-    data[0] = glm::vec4(spotLight.color, spotLight.intensity);
-    data[1] = glm::vec4(spotLight.position, invRadius);
-    data[2] = glm::vec4(glm::normalize(spotLight.direction), 2.0f);
-    data[3] = glm::vec4(spotLight.innerConeAngle, spotLight.outerConeAngle, 
-                        spotLight.colorTemperature, spotLight.sourceRadius);
-    reinterpret_cast<GLint*>(data)[16] = spotLight.castShadows ? 1 : 0;
-    reinterpret_cast<GLint*>(data)[17] = 0;
-    reinterpret_cast<GLint*>(data)[18] = 0;
-    reinterpret_cast<GLint*>(data)[19] = 0;
 }
