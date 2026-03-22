@@ -85,13 +85,13 @@ file(GLOB SHADERS
     "${PROJECT_DIR}/shader/*.tcs"
     "${PROJECT_DIR}/shader/*.tes"
     "${PROJECT_DIR}/shader/*.cs"
-    "${PROJECT_DIR}/shader/*.glsl"
+    "${PROJECT_DIR}/shader/*.h"
     "${PROJECT_DIR}/shader/deferred/*.vs"
     "${PROJECT_DIR}/shader/deferred/*.fs"
 )
 
 file(GLOB SHADER_COMMON 
-    "${PROJECT_DIR}/shader/common/*.glsl"
+    "${PROJECT_DIR}/shader/common/*.h"
 )
 
 file(GLOB DLLS "${PROJECT_DIR}/thirdParty/dlls/*.dll")

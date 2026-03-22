@@ -1,6 +1,6 @@
 #version 330 core
 
-#include "common/common.glsl"
+#include "common/common.h"
 
 out vec4 FragColor;
 

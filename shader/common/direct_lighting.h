@@ -1,5 +1,5 @@
 /**
- * @file direct_lighting.glsl
+ * @file direct_lighting.h
  * @brief 直接光照 irradiance 计算 / Direct lighting irradiance calculations
  * 
  * 提供三种直接光源的 irradiance 计算函数（不包含 BRDF 和 cosTheta）：
@@ -13,7 +13,7 @@
  * 
  * 使用示例 / Usage example:
  * @code
- * #include "direct_lighting.glsl"
+ * #include "direct_lighting.h"
  * 
  * void main() {
  *     vec3 N = normalize(normal);
@@ -33,7 +33,7 @@
 
 #ifndef DIRECT_LIGHTING_GLSL
 #define DIRECT_LIGHTING_GLSL
-
+#include "common.h"
 // ==================== 色温转换 / Color Temperature Conversion ====================
 
 /**

@@ -1,5 +1,5 @@
 /**
- * @file light_and_camera.glsl
+ * @file light_and_camera.h
  * @brief 光照和相机数据结构 / Light and camera data structures
  * 
  * 定义光照和相机的 Uniform 结构体，针对 std140 布局优化内存。

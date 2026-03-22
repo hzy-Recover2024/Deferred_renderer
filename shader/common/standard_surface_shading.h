@@ -1,5 +1,6 @@
 #ifndef STANDARD_SURFACE_SHADING_GLSL
 #define STANDARD_SURFACE_SHADING_GLSL
+#include "common.h"
 /*
  * 包含BRDF的各项计算
 */
