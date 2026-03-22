@@ -76,11 +76,9 @@ void LightingPass::Execute()
         for (size_t i = 0; i < lights.size() && i < NR_LIGHTS; ++i)
         {
             std::string prefix = "lights[" + std::to_string(i) + "].";
-            m_Shader->setVec3(prefix + "Position", lights[i].Position);
-            m_Shader->setVec3(prefix + "Color", lights[i].Color);
-
-            m_Shader->setFloat(prefix + "Linear", lights[i].Linear);
-            m_Shader->setFloat(prefix + "Quadratic", lights[i].Quadratic);
+            m_Shader->setVec3(prefix + "Position", lights[i].position);
+            m_Shader->setVec3(prefix + "Color", lights[i].color * lights[i].intensity);
+            m_Shader->setFloat(prefix + "Radius", lights[i].influenceRadius);
         }
     }
 
